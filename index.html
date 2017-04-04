@@ -83,13 +83,13 @@
             $('#highlight-month').html(highlightMoment.format('MMMM YYYY'));
             highlights = data.highlights;
             monthOffset = 0;
+            setTimeout(getHighlights, 10000);
           } else {
             monthOffset++;
+            getHighlights();
           }
         }
       })
-
-      setTimeout(getHighlights, 10000);
     }
 
     function displayHighlights() {
