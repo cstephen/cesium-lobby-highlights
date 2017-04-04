@@ -58,7 +58,7 @@
 
       frame.addEventListener('load', function () {
         var cssLink = frame.contentDocument.createElement('link');
-        cssLink.href = Cesium.buildModuleUrl('infobox.css');
+        cssLink.href = Cesium.buildModuleUrl('../css/infobox.css');
         cssLink.rel = 'stylesheet';
         cssLink.type = 'text/css';
         frame.contentDocument.head.appendChild(cssLink);
