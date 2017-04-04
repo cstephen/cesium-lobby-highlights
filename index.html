@@ -9,6 +9,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
   <title>Pan-Arctic Climate Highlights</title>
   <script src="jquery-3.2.0.min.js"></script>
+  <script src="moment.min.js"></script>
   <script src="Cesium/Cesium.js"></script>
   <style>
       @import url(Cesium/Widgets/widgets.css);
@@ -25,12 +26,15 @@
 <body>
   <span style="position: absolute; top: 0; left: 25px; z-index: 1; color: #fff; font-family: sans-serif; text-shadow: 0px 0px 10px #000;">
     <h1 style="margin-bottom: 0;">Climate Highlights</h1>
-    <h2 style="margin-top: 0;">January 2017</h2>
+    <h2 id="highlight-month" style="margin-top: 0;"></h2>
   </span>
   <div id="cesiumContainer"></div>
   <script>
     var icons;
     var viewer;
+    var highlightMoment;
+    var monthOffset = 0;
+    var highlights;
 
     function initialize() {
       Cesium.BingMapsApi.defaultKey = '...';
@@ -68,19 +72,29 @@
     }
 
     function getHighlights() {
+      highlightMoment = moment().subtract(monthOffset, 'months').startOf('month');
+      var month = highlightMoment.format('YYYY-MM');
+
       jQuery.getJSON({
         dataType: 'json',
-        url: '/climate-highlights/2017-02/2017-02',
-        success: displayHighlights
+        url: '/climate-highlights/' + month + '/' + month,
+        success: function(data) {
+          if(data.highlights.length > 0) {
+            $('#highlight-month').html(highlightMoment.format('MMMM YYYY'));
+            highlights = data.highlights;
+            monthOffset = 0;
+          } else {
+            monthOffset++;
+          }
+        }
       })
 
-     setTimeout(getHighlights, 30000);
+      setTimeout(getHighlights, 10000);
     }
 
-    function displayHighlights(data) {
+    function displayHighlights() {
       var index = 0;
       var dataSource = new Cesium.CustomDataSource("my data")
-      var highlights = data.highlights;
 
       highlights.forEach(function (highlight) {
         dataSource.entities.add({
@@ -114,8 +128,16 @@
       }
     }
 
-    initialize();
+    function start() {
+      if(highlights === undefined) {
+        setTimeout(start, 1000);
+      } else {
+        displayHighlights();
+      }
+    }
 
+    initialize();
+    start();
   </script>
 </body>
 </html>
