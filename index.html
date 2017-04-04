@@ -8,6 +8,7 @@
   <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
   <title>Pan-Arctic Climate Highlights</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script src="Cesium/Cesium.js"></script>
   <style>
       @import url(Cesium/Widgets/widgets.css);
@@ -28,143 +29,92 @@
   </span>
   <div id="cesiumContainer"></div>
   <script>
-    var icons = {
-      'high-temperatures': 'high_temperature.png',
-      'wind': 'high_winds.png',
-      'high-snow': 'snow.png',
-      'sea-ice-changes': 'sea_ice.png'
-    }
+    var icons;
+    var viewer;
 
-    var data = {
-      "highlights": [
-      {
-          "date": "2017-01",
-          "interval": "monthly",
-          "lat": 71.28,
-          "lon": -156.66,
-          "kind": "high-temperatures",
-          "summary": "Utqiaġvik (Barrow) near record warm January",
-          "description": "<p>\r\n\tThe average temperature for January at&nbsp;Utqiaġvik (Barrow) of -0.3&deg;F (-17.9&deg;C) ties with 2016 as the second warmest January of record. The mildest January was in 1930, when the average temperature was a remarkable +5.6&deg;F (-14.7&deg;C). Climate observations have been made regularly at&nbsp;Utqiaġvik (Barrow) since October 1920.&nbsp;</p>\r\n",
-          "image": "<img src=\"https://accap.uaf.edu/sites/default/files/image%20%282%29.png\" width=\"600\" height=\"360\" alt=\"Utqiagvik (Barrow) Average January Temps\" title=\"\" />",
-          "caption": "Utqiagvik (Barrow) Average January Temps"
-        },
-        {
-          "date": "2017-01",
-          "interval": "monthly",
-          "lat": 61.22,
-          "lon": -150,
-          "kind": "high-snow",
-          "summary": "Snowy January at Anchorage",
-          "description": "<p>\r\n\tAnchorage International Airport received 31.7&quot; (80.5cm) of snow in January, making this the snowiest month since December 2011. This is the second highest January snowfall at the Anchorage Airport, behind the 34.4&quot; (87.4cm) that fell in January 2000. Climate observations have been made at Anchorage International since 1952.&nbsp;</p>\r\n",
-          "image": "",
-          "caption": ""
-        },
-        {
-          "date": "2017-01",
-          "interval": "daily",
-          "lat": 60.1,
-          "lon": -149.44,
-          "kind": "high-snow",
-          "summary": "Crippling Snow in Seward",
-          "description": "<p>\r\n\tVery heavy snow fell in the Seward area January 20 and 21. An estimated 30&quot; of snow piled up in town. Schools were closed due to heavy snow for the first time in recent memory and prompted city officials to issue a snow emergency to assist in snow removal. At Moose Pass, north of Seward reported of 32&quot; snow fell from the same storm.&nbsp;</p>\r\n\r\n<p>\r\n\t&nbsp;</p>\r\n\r\n<p>\r\n\t&nbsp;</p>\r\n",
-          "image": "<img src=\"https://accap.uaf.edu/sites/default/files/image%20%285%29.png\" width=\"600\" height=\"450\" alt=\"Seward Snow\" title=\"\" />",
-          "caption": "Photo courtesy of Jim Pfeiffenberger (NPS)"
-        },
-        {
-          "date": "2017-01",
-          "interval": "multi-day",
-          "lat": 60.995355339059,
-          "lon": -149.07464466094,
-          "kind": "high-snow",
-          "summary": "Heavy Snow at Alyeska",
-          "description": "<p>\r\n\tTwo separate storms brought heavy snow to the Gridwood and Alyeska areas in mid-January. A total of 17&quot; fell in the first storm January 13-14. After a short break, another storm brought 16&quot; more, pushing the snow depth from 14&quot; to 37&quot; in just five days. The area is no stranger to heavy snow, averaging more than 200&quot; a year, although the past few winters have had very low snowfall near sea-level. &nbsp;</p>\r\n",
-          "image": "",
-          "caption": ""
-        },
-        {
-          "date": "2017-01",
-          "interval": "multi-day",
-          "lat": 63.8,
-          "lon": -170.48,
-          "kind": "sea-ice-changes",
-          "summary": "Very Low Bering Sea Ice Coverage",
-          "description": "<p>\r\n\tSea ice coverage near Alaska was very low early in January, the result of unfavorable weather for sea ice formation during the early winter as well as unusually warm ocean temperatures left over from summer 2016. During the first week of the month open water extended to north of the Bering Sea and into the southernmost Chukchi Sea. So remarkable was the lack of ice that on January 9, at Savoonga on St. Lawrence Island, hunters landed a bowhead whale, the first time in living memory that hunters were out in boats in January in completely ice free waters chasing a whale.</p>\r\n",
-          "image": "",
-          "caption": ""
-        },
-        {
-          "date": "2017-01",
-          "interval": "multi-day",
-          "lat": 58.3,
-          "lon": -134.42,
-          "kind": "wind",
-          "summary": "Strong Winds in Juneau",
-          "description": "<p>\r\n\tA prolonged bout of cold Taku winds buffeted Juneau between January 6 and 8, with widespread damage to roofs, blown&nbsp;down trees and the winds even pushed a shipping container into Gastineau Channel. Winds peaked at 94 mph at the Juneau&rsquo;s downtown library and 78 mph at the Federal Building.&nbsp;</p>\r\n",
-          "image": "",
-          "caption": ""
-        }
-      ]
-    }
+    function initialize() {
+      Cesium.BingMapsApi.defaultKey = '...';
 
-    var highlights = data.highlights;
-    var index = 0;
+      icons = {
+        'high-temperatures': 'high_temperature.png',
+        'wind': 'high_winds.png',
+        'high-snow': 'snow.png',
+        'sea-ice-changes': 'sea_ice.png'
+      }
 
-    Cesium.BingMapsApi.defaultKey = '...';
-    var viewer = new Cesium.Viewer('cesiumContainer', {
-      animation: false,
-      baseLayerPicker: false,
-      fullscreenButton: false,
-      geocoder: false,
-      homeButton: false,
-      navigationHelpButton: false,
-      sceneModePicker: false,
-      timeline: false,
-      vrButtin: false
-    });
-
-    var frame = viewer.infoBox.frame;
-
-    frame.addEventListener('load', function () {
-      var cssLink = frame.contentDocument.createElement('link');
-      cssLink.href = Cesium.buildModuleUrl('infobox.css');
-      cssLink.rel = 'stylesheet';
-      cssLink.type = 'text/css';
-      frame.contentDocument.head.appendChild(cssLink);
-    }, false);
-
-    var dataSource = new Cesium.CustomDataSource("my data")
-
-    highlights.forEach(function (highlight) {
-      dataSource.entities.add({
-        position: new Cesium.Cartesian3.fromDegrees(highlight.lon, highlight.lat),
-        name: highlight.summary,
-        description: highlight.description,
-        billboard: {
-          image: 'images/' + icons[highlight.kind],
-          scale: 0.5
-        }
-      });
-    });
-
-    viewer.dataSources.add(dataSource);
-
-    fly();
-
-    function fly () {
-      index = (index + 1) % highlights.length;
-      var pointAbove = Cesium.Cartesian3.fromDegrees(highlights[index].lon, highlights[index].lat, 250000)
-      console.log(pointAbove);
-
-      viewer.camera.flyTo({
-        destination: pointAbove,
-        duration: 8,
-        complete: function() {
-          viewer.selectedEntity = dataSource.entities.values[index];
-        }
+      viewer = new Cesium.Viewer('cesiumContainer', {
+        animation: false,
+        baseLayerPicker: false,
+        fullscreenButton: false,
+        geocoder: false,
+        homeButton: false,
+        navigationHelpButton: false,
+        sceneModePicker: false,
+        timeline: false,
+        vrButtin: false
       });
 
-      setTimeout(fly, 10000);
+      var frame = viewer.infoBox.frame;
+
+      frame.addEventListener('load', function () {
+        var cssLink = frame.contentDocument.createElement('link');
+        cssLink.href = Cesium.buildModuleUrl('infobox.css');
+        cssLink.rel = 'stylesheet';
+        cssLink.type = 'text/css';
+        frame.contentDocument.head.appendChild(cssLink);
+      }, false);
+
+      getHighlights();
     }
+
+    function getHighlights() {
+      jQuery.getJSON({
+        dataType: 'json',
+        url: '/climate-highlights/2017-02/2017-02',
+        success: displayHighlights
+      })
+
+     setTimeout(getHighlights, 30000);
+    }
+
+    function displayHighlights(data) {
+      var index = 0;
+      var dataSource = new Cesium.CustomDataSource("my data")
+      var highlights = data.highlights;
+
+      highlights.forEach(function (highlight) {
+        dataSource.entities.add({
+          position: new Cesium.Cartesian3.fromDegrees(highlight.lon, highlight.lat),
+          name: highlight.summary,
+          description: highlight.description,
+          billboard: {
+            image: 'images/' + icons[highlight.kind],
+            scale: 0.5
+          }
+        });
+      });
+
+      viewer.dataSources.add(dataSource);
+
+      fly();
+
+      function fly () {
+        index = (index + 1) % highlights.length;
+        var pointAbove = Cesium.Cartesian3.fromDegrees(highlights[index].lon, highlights[index].lat, 250000);
+
+        viewer.camera.flyTo({
+          destination: pointAbove,
+          duration: 8,
+          complete: function() {
+            viewer.selectedEntity = dataSource.entities.values[index];
+          }
+        });
+
+        setTimeout(fly, 10000);
+      }
+    }
+
+    initialize();
 
   </script>
 </body>
