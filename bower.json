@@ -1,0 +1,29 @@
+{
+  "name": "cesium-lobby-highlights",
+  "homepage": "https://github.com/ua-snap/cesium-lobby-highlights",
+  "authors": [
+    "Craig Stephenson <crstephenson@alaska.edu>"
+  ],
+  "description": "Cesium-based web app to display climate highlights on lobby monitor without user input.",
+  "main": "index.html",
+  "keywords": [
+    "cesium",
+    "json",
+    "climate",
+    "weather"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "cesium": "cesiumjs#^1.22.0",
+    "jquery": "^3.2.1",
+    "moment": "^2.18.1"
+  }
+}

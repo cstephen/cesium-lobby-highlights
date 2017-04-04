@@ -8,11 +8,11 @@
   <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
   <title>Alaska Climate and Weather Highlights</title>
-  <script src="lib/jquery-3.2.0.min.js"></script>
-  <script src="lib/moment.min.js"></script>
-  <script src="lib/Cesium/Cesium.js"></script>
+  <script src="bower_components/jquery/dist/jquery.min.js"></script>
+  <script src="bower_components/moment/min/moment.min.js"></script>
+  <script src="bower_components/cesium/Cesium/Cesium.js"></script>
   <style>
-      @import url(lib/Cesium/Widgets/widgets.css);
+      @import url(bower_components/cesium/Cesium/Widgets/widgets.css);
       html, body, #cesiumContainer {
           width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
       }
@@ -62,7 +62,7 @@
 
       frame.addEventListener('load', function () {
         var cssLink = frame.contentDocument.createElement('link');
-        cssLink.href = Cesium.buildModuleUrl('../../css/infobox.css');
+        cssLink.href = Cesium.buildModuleUrl('../../../css/infobox.css');
         cssLink.rel = 'stylesheet';
         cssLink.type = 'text/css';
         frame.contentDocument.head.appendChild(cssLink);
