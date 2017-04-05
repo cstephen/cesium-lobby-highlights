@@ -1,4 +1,3 @@
-var icons;
 var viewer;
 var highlightMoment;
 var monthOffset = 0;
@@ -14,13 +13,6 @@ function start() {
 
 function initialize() {
   Cesium.BingMapsApi.defaultKey = '...';
-
-  icons = {
-    'high-temperatures': 'high_temperature.png',
-    'wind': 'high_winds.png',
-    'high-snow': 'snow.png',
-    'sea-ice-changes': 'sea_ice.png'
-  }
 
   viewer = new Cesium.Viewer('cesiumContainer', {
     animation: false,
@@ -79,7 +71,7 @@ function displayHighlights() {
       name: highlight.summary,
       description: highlight.description,
       billboard: {
-        image: 'images/' + icons[highlight.kind],
+        image: 'images/' + highlight.kind + '.png',
         scale: 0.5
       }
     });
