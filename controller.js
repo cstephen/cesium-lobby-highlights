@@ -1,8 +1,9 @@
 var viewer;
 var highlightsStart;
 var highlightsEnd;
-var monthOffset = 0;
 var highlights;
+var monthOffset = 0;
+var maxRandomHeight = 10000;
 
 function start() {
   if(highlights === undefined) {
@@ -71,9 +72,9 @@ function displayHighlights() {
   var dataSource = new Cesium.CustomDataSource("my data")
 
   highlights.forEach(function (highlight) {
-    var height = Math.floor(Math.random() * 10000);
+    var randomHeight = Math.floor(Math.random() * maxRandomHeight);
     dataSource.entities.add({
-      position: new Cesium.Cartesian3.fromDegrees(highlight.lon, highlight.lat, height),
+      position: new Cesium.Cartesian3.fromDegrees(highlight.lon, highlight.lat, randomHeight),
       name: highlight.summary,
       description: highlight.description,
       billboard: {
@@ -87,7 +88,7 @@ function displayHighlights() {
 
   fly();
 
-  function fly () {
+  function fly (oldIndex) {
     index = (index + 1) % highlights.length;
     var pointAbove = Cesium.Cartesian3.fromDegrees(highlights[index].lon, highlights[index].lat, 250000);
 
@@ -95,11 +96,21 @@ function displayHighlights() {
       destination: pointAbove,
       duration: 8,
       complete: function() {
+        if (oldIndex !== undefined) {
+          var randomHeight = Math.floor(Math.random() * maxRandomHeight);
+          var randomHeightPosition = new Cesium.Cartesian3.fromDegrees(highlights[oldIndex].lon, highlights[oldIndex].lat, randomHeight);
+          dataSource.entities.values[oldIndex].position = randomHeightPosition;
+        }
+
+        var topHeightPosition = new Cesium.Cartesian3.fromDegrees(highlights[index].lon, highlights[index].lat, maxRandomHeight + 1);
+        dataSource.entities.values[index].position = topHeightPosition;
         viewer.selectedEntity = dataSource.entities.values[index];
       }
     });
 
-    setTimeout(fly, 10000);
+    setTimeout(function() {
+      fly(oldIndex);
+    }, 10000);
   }
 }
 
