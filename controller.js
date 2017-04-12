@@ -1,5 +1,6 @@
 var viewer;
-var highlightMoment;
+var highlightsStart;
+var highlightsEnd;
 var monthOffset = 0;
 var highlights;
 
@@ -41,15 +42,18 @@ function initialize() {
 }
 
 function getHighlights() {
-  highlightMoment = moment().subtract(monthOffset, 'months').startOf('month');
-  var month = highlightMoment.format('YYYY-MM');
+  highlightsStart = moment().subtract(monthOffset, 'months').startOf('year');
+  highlightsEnd = moment().subtract(monthOffset, 'months').endOf('month');
+
+  var formattedStart = highlightsStart.format('YYYY-MM');
+  var formattedEnd = highlightsEnd.format('YYYY-MM');
 
   jQuery.getJSON({
     dataType: 'json',
-    url: '/climate-highlights/' + month + '/' + month,
+    url: '/climate-highlights/' + formattedStart + '/' + formattedEnd,
     success: function(data) {
       if(data.highlights.length > 0) {
-        $('#highlight-month').html(highlightMoment.format('MMMM YYYY'));
+        $('#highlight-month').html(highlightsStart.format('MMMM YYYY') + ' - ' + highlightsEnd.format('MMMM YYYY'));
         highlights = data.highlights;
         monthOffset = 0;
         setTimeout(getHighlights, 10000);
