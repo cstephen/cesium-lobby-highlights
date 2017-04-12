@@ -53,7 +53,8 @@ function getHighlights() {
     url: '/climate-highlights/' + formattedStart + '/' + formattedEnd,
     success: function(data) {
       if(data.highlights.length > 0) {
-        $('#highlight-month').html(highlightsStart.format('MMMM YYYY') + ' - ' + highlightsEnd.format('MMMM YYYY'));
+        var dateLabel = highlightsStart.format('MMMM YYYY') + ' - ' + highlightsEnd.format('MMMM YYYY');
+        $('#highlight-month').html(dateLabel);
         highlights = data.highlights;
         monthOffset = 0;
         setTimeout(getHighlights, 10000);
