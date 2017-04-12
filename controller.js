@@ -70,8 +70,9 @@ function displayHighlights() {
   var dataSource = new Cesium.CustomDataSource("my data")
 
   highlights.forEach(function (highlight) {
+    var height = Math.floor(Math.random() * 10000);
     dataSource.entities.add({
-      position: new Cesium.Cartesian3.fromDegrees(highlight.lon, highlight.lat),
+      position: new Cesium.Cartesian3.fromDegrees(highlight.lon, highlight.lat, height),
       name: highlight.summary,
       description: highlight.description,
       billboard: {
