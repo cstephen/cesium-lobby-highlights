@@ -90,7 +90,7 @@ function displayHighlights() {
 
   function fly (oldIndex) {
     index = (index + 1) % highlights.length;
-    var pointAbove = Cesium.Cartesian3.fromDegrees(highlights[index].lon, highlights[index].lat, 250000);
+    var pointAbove = Cesium.Cartesian3.fromDegrees(highlights[index].lon, highlights[index].lat, 2000000);
 
     viewer.camera.flyTo({
       destination: pointAbove,
